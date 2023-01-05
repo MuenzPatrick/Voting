@@ -1,0 +1,55 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+@if (!IsRoleSet)
+{
+    <div class="card">
+        <div class="card-title">Auswahl Rolle</div>
+        <div class="card-body">
+            <form>
+                <label for="role">Wähle deine Rolle in der Abstimmung: </label>
+                <select name="role" id="role" @onchange="() => { IsInitiator = !IsInitiator; }">
+                    <option value="initiator" >Initiator</option>
+                    <option value="User">User</option>
+                </select>
+                <button type="button" @onclick="() => { IsRoleSet = true; }">Bestätigen</button>
+            </form>
+        </div>
+    </div>
+}
+@if (IsRoleSet && IsAbstimmungStarted && !IsAbstimmungFinalized)
+{
+    <div class="card">
+        <div class="card-title">Abstimmungsbox</div>
+
+        <div class="card-body">
+            <EditForm Model="model" OnValidSubmit="Submit">
+                <InputRadioGroup @bind-Value="model.Selection">
+                    <InputRadio Value="options[0]"/> yes
+                    <InputRadio Value="options[1]"/> no
+                </InputRadioGroup>
+                <button type="submit">Absenden</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@if (IsRoleSet && IsInitiator)
+{
+    <div class="card">
+        <div class="card-title">Dashboard</div>
+        <div class="card-body">
+            @if (!IsAbstimmungStarted)
+            {
+                <button type="button" @onclick="StartAbstimmung">Abstimmung starten</button>
+            } 
+        </div>
+    </div>
+}
+
