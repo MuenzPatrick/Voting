@@ -44,7 +44,12 @@ public class VotingHub : Hub
 
     public async Task GetVotingStatus()
     {
-        await Clients.Caller.SendAsync("GetVotingStatus", VotingStatusManager.IsVotingStarted, VotingStatusManager.IsVotingSealed);
+        var VotingStatus = new VotingStatus()
+        {
+            Started = VotingStatusManager.IsVotingStarted,
+            Finalized = VotingStatusManager.IsVotingSealed
+        };
+        await Clients.Caller.SendAsync("GetVotingStatus", VotingStatus);
     }
 
     public async Task GetPublicKey()
