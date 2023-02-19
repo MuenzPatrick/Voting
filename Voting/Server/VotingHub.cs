@@ -23,10 +23,9 @@ public class VotingHub : Hub
 
         VotingStatusManager.StimmzettelList.AddLast(voting);
         VotingStatusManager.AbgegebeneStimmen.Add(userId);
+        await Clients.Caller.SendAsync("AbstimmungDone");
         return true;
     }
-
-
 
     public async Task StartVoting()
     {
