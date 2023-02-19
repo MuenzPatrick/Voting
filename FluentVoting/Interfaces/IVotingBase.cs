@@ -18,6 +18,10 @@ namespace FluentVoting.Interfaces
 
         event Action? OnAbstimmungStoppedEvent;
 
+        public event Action? OnAbstimmungDoneEvent;
+
+        public event Action<bool, bool>? OnAbstimmungStatusChanged;
+
         public Task<IVotingBase> Connect();
         public Task<IVotingBase> Start();
 

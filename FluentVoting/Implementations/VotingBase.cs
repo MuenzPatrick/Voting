@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using System.Transactions;
 using FluentVoting.Interfaces;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Research.SEAL;
@@ -17,6 +18,8 @@ namespace FluentVoting.Implementations
 
         public event Action? OnAbstimmungDoneEvent;
 
+        public event Action<bool, bool>? OnAbstimmungStatusChanged;
+
         private Microsoft.Research.SEAL.PublicKey publicKey = new();
 
         public async Task<IVotingBase> Connect()
@@ -31,21 +34,15 @@ namespace FluentVoting.Implementations
 
         private void BuildListener()
         {
-            HubConnection.On("StartVoting", () =>
-            {
-                OnAbstimmungStartedEvent?.Invoke();
-            });
-            HubConnection.On("StopVoting", () =>
-            {
-                OnAbstimmungStoppedEvent?.Invoke();
-            });
+            HubConnection.On("StartVoting", () => { OnAbstimmungStartedEvent?.Invoke(); });
+            HubConnection.On("StopVoting", () => { OnAbstimmungStoppedEvent?.Invoke(); });
 
-            HubConnection.On("AbstimmungDone", () =>
-            {
-                OnAbstimmungDoneEvent?.Invoke();
-            });
+            HubConnection.On("AbstimmungDone", () => { OnAbstimmungDoneEvent?.Invoke(); });
 
+            HubConnection.On<bool, bool>("GetVotingStatus",
+                (started, stopped) => { OnAbstimmungStatusChanged?.Invoke(started, stopped); });
         }
+
         public async Task<IVotingBase> Start()
         {
             await HubConnection.SendAsync("StartVoting");

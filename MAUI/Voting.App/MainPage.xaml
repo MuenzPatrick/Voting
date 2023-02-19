@@ -26,6 +26,13 @@
                 Clicked="OnButtonRoleSubmitClicked"
                 MaximumWidthRequest="100"
                 />
+            <Button x:Name="b_StartVoting"
+                    IsVisible="false"
+                    Text="Start"
+                    VerticalOptions="Center"
+                    Clicked="OnButtonStartVotingClicked"
+                    MaximumWidthRequest="100"
+                />
             <StackLayout x:Name="sl_Choices"
                          Margin="20"
                          Orientation="Horizontal"

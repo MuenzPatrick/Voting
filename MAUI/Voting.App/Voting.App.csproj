@@ -56,4 +56,8 @@
 	  <Folder Include="SignalR\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\FluentVoting\FluentVoting.csproj" />
+	</ItemGroup>
+
 </Project>
