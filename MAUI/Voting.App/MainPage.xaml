@@ -44,8 +44,9 @@
                                 />
                 <Button x:Name="b_SendChoice"
                         Text="Bestätigen"
+                        IsVisible="false"
                         VerticalOptions="Center"
-                        Clicked="OnButtonRoleSubmitClicked"
+                        Clicked="OnButtonSendVotingClicked"
                         MaximumWidthRequest="100"
                 />
             </StackLayout>

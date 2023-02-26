@@ -11,9 +11,7 @@ namespace FluentVoting.Interfaces
     public interface IVotingBase
     {
         public HubConnection HubConnection { get; }
-
-        public bool IsStarted => this.HubConnection.State == HubConnectionState.Connected;
-
+        
         event Action OnAbstimmungStartedEvent;
 
         event Action? OnAbstimmungStoppedEvent;

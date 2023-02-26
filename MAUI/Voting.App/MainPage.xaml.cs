@@ -1,7 +1,5 @@
-﻿using Android.Views;
-using FluentVoting.Implementations;
+﻿using FluentVoting.Implementations;
 using FluentVoting.Interfaces;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Voting.App
 {
@@ -10,6 +8,10 @@ namespace Voting.App
         private IVotingBase voting;
 
         private bool IsInitiator;
+
+        private ulong[] votingSelection = new ulong[2];
+
+        private int UserId { get; set; }
 
         public MainPage()
         {
@@ -36,15 +38,21 @@ namespace Voting.App
         {
             RolePicker.IsVisible = false;
             b_SendRole.IsVisible = false;
-            sl_Choices.IsVisible = true;
+            sl_Choices.IsVisible = false;
             if (RolePicker.SelectedIndex == 0) IsInitiator = true;
+            UserId = new Random().Next();
             if(IsInitiator) ShowVotingStart();
             await voting.Connect();
         }
 
         private async void OnCollectionViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            votingSelection = e.CurrentSelection.ToString() switch
+            {
+                "Yes" => new ulong[]{ 1, 0 },
+                "No" => new ulong[] { 0, 1 },
+                _ => new ulong[] { 0, 0 }
+            };
         }
 
         private void SetVotingEventListener()
@@ -63,6 +71,16 @@ namespace Voting.App
         private async void OnButtonStartVotingClicked(object sender, EventArgs e)
         {
             await voting.Start();
+            b_StartVoting.IsVisible = false;
+            sl_Choices.IsVisible = true;
+            b_SendChoice.IsVisible = true;
+        }
+
+        private async void OnButtonSendVotingClicked(object sender, EventArgs e)
+        {
+            await voting.Vote(votingSelection, UserId);
+            sl_Choices.IsVisible = false;
+            b_SendChoice.IsVisible = false;
         }
     }
 }

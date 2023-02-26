@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Research.SEAL;
 using Voting.Contracts;
@@ -53,6 +54,16 @@ public class VotingHub : Hub
 
     public async Task GetPublicKey()
     {
-        await Clients.Caller.SendAsync("GetPublicKey", VotingStatusManager.SealManager.PublicKey);
+        //Stream stream = new MemoryStream();
+        Console.WriteLine("GetPublicKey");
+        //byte[] b;
+        //var save = VotingStatusManager.SealManager.PublicKey.Save(stream);
+        //using BinaryReader br = new BinaryReader(stream);
+        //b = br.ReadBytes((int)stream.Length);
+        PublicKey obj = VotingStatusManager.SealManager.PublicKey;
+        MemoryStream stream = new MemoryStream();
+        obj.Save(stream);
+        var arr = stream.ToArray();
+        await Clients.Caller.SendAsync("GetPublicKey", arr);
     }
 }

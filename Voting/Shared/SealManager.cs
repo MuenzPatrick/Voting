@@ -8,14 +8,14 @@ namespace Voting.Shared
     {
         public PublicKey PublicKey { get; set; }
 
-        private readonly SEALContext context;
+        public SEALContext Context { get; private set; }
 
         private readonly SecretKey secretKey;
         public SealManager()
         {
 
-            context = new SEALContext(GetParams());
-            using KeyGenerator keygen = new KeyGenerator(context);
+            Context = new SEALContext(GetParams());
+            using KeyGenerator keygen = new KeyGenerator(Context);
             secretKey = keygen.SecretKey;
             keygen.CreatePublicKey(out PublicKey publicKey);
             this.PublicKey = publicKey;
@@ -33,7 +33,7 @@ namespace Voting.Shared
 
         public Ciphertext Encrypt(int value, PublicKey publicKey)
         {
-            using Encryptor encryptor = new Encryptor(context, publicKey);
+            using Encryptor encryptor = new Encryptor(Context, publicKey);
             using Plaintext xPlain = new Plaintext(value.ToString());
             Ciphertext xEncrypted = new Ciphertext();
             encryptor.Encrypt(xPlain, xEncrypted);
@@ -42,7 +42,7 @@ namespace Voting.Shared
 
         public Ciphertext Encrypt(int value)
         {
-            using Encryptor encryptor = new Encryptor(context, PublicKey);
+            using Encryptor encryptor = new Encryptor(Context, PublicKey);
             using Plaintext xPlain = new Plaintext(value.ToString());
             Ciphertext xEncrypted = new Ciphertext();
             encryptor.Encrypt(xPlain, xEncrypted);
@@ -51,7 +51,7 @@ namespace Voting.Shared
 
         public Ciphertext Encrypt(IEnumerable<ulong> values)
         {
-            using Encryptor encryptor = new Encryptor(context, PublicKey);
+            using Encryptor encryptor = new Encryptor(Context, PublicKey);
             using Plaintext xPlain = new Plaintext(values);
             Ciphertext xEncrypted = new Ciphertext();
             encryptor.Encrypt(xPlain, xEncrypted);
@@ -60,7 +60,7 @@ namespace Voting.Shared
 
         public Ciphertext Encrypt(IEnumerable<ulong> values, PublicKey publicKey)
         {
-            using Encryptor encryptor = new Encryptor(context, publicKey);
+            using Encryptor encryptor = new Encryptor(Context, publicKey);
             using Plaintext xPlain = new Plaintext(values);
             Ciphertext xEncrypted = new Ciphertext();
             encryptor.Encrypt(xPlain, xEncrypted);
@@ -69,7 +69,7 @@ namespace Voting.Shared
 
         public int Decrypt(Ciphertext cipher)
         {
-            using Decryptor decryptor = new Decryptor(context, secretKey);
+            using Decryptor decryptor = new Decryptor(Context, secretKey);
             using Plaintext xDecrypted = new Plaintext();
             decryptor.Decrypt(cipher, xDecrypted);
             int.TryParse(xDecrypted.ToString(), System.Globalization.NumberStyles.HexNumber, null, out int result);
@@ -78,7 +78,7 @@ namespace Voting.Shared
 
         public Ciphertext AddCiphers(List<Ciphertext> values)
         {
-            using Evaluator evaluator = new Evaluator(context);
+            using Evaluator evaluator = new Evaluator(Context);
             Ciphertext result = new Ciphertext();
             evaluator.AddMany(values, result);
             return result;
